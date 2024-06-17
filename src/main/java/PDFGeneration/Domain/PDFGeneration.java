@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -33,7 +34,13 @@ public class PDFGeneration {
 
 	@Column(name = "CUST_NAME")
 	@NotNull(message = "Customer Name is invalid")
+	@NotBlank
 	private String customerName;
+
+	@Column(name = "INVOICE_NAME")
+	@NotNull(message = "Invoice name cannot be null")
+	@NotBlank
+	private String invoiceName;
 
 	@Column(name = "INVOICE_PDF")
 	@Size(min = 100, max = 1000, message = "File size  should be bellow 100KB and above 1MB")
@@ -50,11 +57,13 @@ public class PDFGeneration {
 	
 	public PDFGeneration(@NotNull(message = "Invalid Customer ID") int custId,
 						 @NotNull(message = "Customer Name is invalid") String customerName,
+			@NotNull(message = "Invoice name cannot be null") String invoiceName,
 			@Size(min = 100, max = 1000, message = "File size  should be bellow 100KB and above 1MB") byte[] invoicePDF,
 			@NotNull(message = "Created Date is invalid") Date createdDate,
 			@NotNull(message = "User ID is null") @Pattern(regexp = "^[1-9]$", message = "Invalid User ID") int userId) {
 		this.custId = custId;
 		this.customerName = customerName;
+		this.invoiceName = invoiceName;
 		this.invoicePDF = invoicePDF;
 		this.createdDate = createdDate;
 		this.userId = userId;

@@ -11,6 +11,6 @@ import java.util.Date;
 @Setter
 public class GetAllPDF {
     private String customerName;
-    private String invoicePDF;
+    private String invoiceName;
     private String createdDate;
 }

@@ -3,6 +3,7 @@ package PDFGeneration.Service;
 import PDFGeneration.DTO.GetAllPDF;
 import PDFGeneration.DTO.InvoiceInput;
 import PDFGeneration.Domain.PDFGeneration;
+import PDFGeneration.Exception.InputInvalid;
 import PDFGeneration.Repository.PDFRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.sql.results.NoMoreOutputsException;
@@ -25,18 +26,28 @@ public class PDFService {
 	}
 
 	public List<GetAllPDF> getAllPdf(int custId, int userId, int pageNo) {
-		PageRequest pageRequest = PageRequest.of(pageNo , 10);
-		Page<PDFGeneration> paginatedResult= pr.findByUserIdAndCustId(custId , userId , pageRequest);
-		if(pageNo > paginatedResult.getTotalPages()){
-			log.error("Requested Page Does Not Exists :: {}" , pageNo);
-			throw new NoMoreOutputsException("Requested Page Does Not Exists");
+		try {
+			PageRequest pageRequest = PageRequest.of(pageNo, 10);
+			Page<PDFGeneration> paginatedResult = pr.findByUserIdAndCustId(custId, userId, pageRequest);
+			if (pageNo >= paginatedResult.getTotalPages()) {
+				log.error("Requested Page Does Not Exists :: {}", pageNo);
+				throw new NoMoreOutputsException("Requested Page Does Not Exists");
+			}
+			ArrayList<GetAllPDF> getAllPDFArrayList = new ArrayList<>();
+			for (PDFGeneration pdf : paginatedResult.getContent()) {
+				GetAllPDF getAllPDF = new GetAllPDF();
+				getAllPDF.setCustomerName(pdf.getCustomerName());
+				getAllPDF.setCreatedDate(String.valueOf(pdf.getCreatedDate()));
+				getAllPDF.setInvoiceName(pdf.getInvoiceName());
+				getAllPDFArrayList.add(getAllPDF);
+			}
+			return getAllPDFArrayList;
 		}
-		ArrayList<GetAllPDF> getAllPDFArrayList = new ArrayList<>();
-		for (PDFGeneration pdf : paginatedResult.getContent()){
-			GetAllPDF getAllPDF = new GetAllPDF();
-			getAllPDF.setInvoicePDF("INVOICE NAME");
+		catch(Exception ex){
+			log.error("Invalid Request custId , userId , pageNo :: {} {} {}" , custId , userId , pageNo);
+			throw new InputInvalid("Failed to retrieve Invoice for given inputs");
 		}
-		return null;
+
 	}
 
 	public byte[] createPdf(int userId, int custId, InvoiceInput invoiceInput) {
