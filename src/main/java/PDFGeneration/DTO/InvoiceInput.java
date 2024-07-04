@@ -14,6 +14,10 @@ import java.util.List;
 public class InvoiceInput {
     @NotNull
     @NotEmpty
+    @Size(min = 1, max = 5)
+    public String pdfTemplateId;
+    @NotNull
+    @NotEmpty
     public String userId;
     @NotNull
     @NotEmpty
@@ -23,14 +27,14 @@ public class InvoiceInput {
     public String supplierAddress;
     @NotNull
     @NotEmpty
-    @Size(max = 15)
+    @Size(min = 15, max = 15)
     public String supplierGSTIN;
     @NotNull
     @NotEmpty
     public String clientName;
     @NotNull
     public String clientAddress;
-    @Size(max = 15)
+    @Size(min = 15, max = 15)
     public String clientGSTIN;
     public String addressOfDelivery;
     public String[] stateNameAndCode;
