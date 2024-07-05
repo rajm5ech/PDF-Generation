@@ -30,6 +30,11 @@ public class PDFService {
     private PDFTemplateRepository ptr;
 
     @Autowired
+    public void setPtr(PDFTemplateRepository ptr) {
+        this.ptr = ptr;
+    }
+
+    @Autowired
     public void setIc(InvoiceConfig ic) {
         this.ic = ic;
     }
@@ -68,7 +73,7 @@ public class PDFService {
             InvoiceResponse invoiceResponse = new InvoiceResponse();
             InvoiceCategory invoiceCategory = ic.decideInvoiceCategory(invoiceInput.getClientGSTIN());
             PDFTemplate pdfTemplate = ptr.findByTemplateID(userId, Integer.parseInt(invoiceInput.getPdfTemplateId()));
-            byte[] generatedInvoicePDF = invoiceCategory.generateInvoicePDF(invoiceInput , pdfTemplate);
+            byte[] generatedInvoicePDF = invoiceCategory.generateInvoicePDF(invoiceInput, pdfTemplate);
             PDFGeneration pdfGeneration = new PDFGeneration();
             pdfGeneration.setUserId(userId);
             pdfGeneration.setCustId(custId);
