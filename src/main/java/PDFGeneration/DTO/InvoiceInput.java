@@ -50,6 +50,9 @@ public class InvoiceInput {
     public String totalAmount;
     @NotNull
     @NotEmpty
+    public String invoiceName;
+    @NotNull
+    @NotEmpty
     public byte[] digitalSignature;
 
 

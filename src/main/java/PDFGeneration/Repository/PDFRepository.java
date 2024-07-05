@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional(isolation = Isolation.SERIALIZABLE)
-public interface PDFRepository extends JpaRepository<PDFGeneration , Integer> {
+public interface PDFRepository extends JpaRepository<PDFGeneration, Integer> {
 
     @Query("SELECT e FROM PDFGeneration e WHERE e.userId = :userId AND e.custId = :custId ORDER BY e.createdDate DESC")
-    Page<PDFGeneration> findByUserIdAndCustId(@Param("userId")int custId , @Param("custId")int userId , PageRequest pageRequest);
+    Page<PDFGeneration> findByUserIdAndCustId(@Param("userId") int custId, @Param("custId") int userId, PageRequest pageRequest);
+
+
 }

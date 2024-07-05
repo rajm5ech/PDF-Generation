@@ -6,6 +6,6 @@ import PDFGeneration.Domain.PDFTemplate;
 @FunctionalInterface
 public interface InvoiceCategory {
 
-    public byte[] generateInvoicePDF(InvoiceInput input);
+     byte[] generateInvoicePDF(InvoiceInput input , PDFTemplate pdfTemplate);
 
 }

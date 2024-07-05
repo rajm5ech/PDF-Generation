@@ -4,6 +4,7 @@ import java.util.List;
 
 import PDFGeneration.DTO.GetAllPDF;
 import PDFGeneration.DTO.InvoiceInput;
+import PDFGeneration.DTO.InvoiceResponse;
 import PDFGeneration.Exception.UserIdInvalid;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -42,7 +43,7 @@ public class PDFGenerationController {
 
     /* Create Invoice PDF for a customer with all the details coming from Billing Service */
     @PostMapping(value = "/createPdf/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> createPdf(@PathVariable(name = "id") int custId, HttpServletRequest request, @Valid @RequestBody InvoiceInput invoiceInput) {
+    public ResponseEntity<InvoiceResponse> createPdf(@PathVariable(name = "id") int custId, HttpServletRequest request, @Valid @RequestBody InvoiceInput invoiceInput) {
         HttpSession session = request.getSession(false);
         String userId = (String) session.getAttribute("userId");
         if (userId == null || userId.isEmpty()) {
