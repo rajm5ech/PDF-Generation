@@ -74,20 +74,24 @@ public class PDFService {
             InvoiceCategory invoiceCategory = ic.decideInvoiceCategory(invoiceInput.getClientGSTIN());
             PDFTemplate pdfTemplate = ptr.findByTemplateID(userId, Integer.parseInt(invoiceInput.getPdfTemplateId()));
             byte[] generatedInvoicePDF = invoiceCategory.generateInvoicePDF(invoiceInput, pdfTemplate);
-            PDFGeneration pdfGeneration = new PDFGeneration();
-            pdfGeneration.setUserId(userId);
-            pdfGeneration.setCustId(custId);
-            pdfGeneration.setCustomerName(invoiceInput.getClientName());
-            pdfGeneration.setInvoicePDF(generatedInvoicePDF);
-            pdfGeneration.setCreatedDate(Calendar.getInstance().getTime());
-            pdfGeneration.setInvoiceName(invoiceInput.invoiceName);
-            pr.save(pdfGeneration);
             invoiceResponse.setInvoicePDF(generatedInvoicePDF);
+            savePDF(userId ,custId ,invoiceInput ,generatedInvoicePDF);
             return invoiceResponse;
         } catch (Exception ex) {
             log.error("PDF generation failed");
             throw new PDFGenerationFailed("PDF generation failed");
         }
+    }
+
+    public void savePDF(int userId, int custId, InvoiceInput invoiceInput ,byte[]generatedInvoicePDF){
+        PDFGeneration pdfGeneration = new PDFGeneration();
+        pdfGeneration.setUserId(userId);
+        pdfGeneration.setCustId(custId);
+        pdfGeneration.setCustomerName(invoiceInput.getClientName());
+        pdfGeneration.setInvoicePDF(generatedInvoicePDF);
+        pdfGeneration.setCreatedDate(Calendar.getInstance().getTime());
+        pdfGeneration.setInvoiceName(invoiceInput.invoiceName);
+        pr.save(pdfGeneration);
     }
 }
 
