@@ -2,12 +2,16 @@ package PDFGeneration.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
+
+import java.util.Date;
 
 @Getter
 @Setter
 public class InvoiceResponse {
-    public HttpStatus status;
-    public byte[] invoicePDF;
-    public String errorDescription;
+    private Date timeStamp;
+    private byte[] invoicePDF;
+    private int userId;
+    private int custId;
+    private String invoiceName;
+
 }

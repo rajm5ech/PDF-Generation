@@ -61,6 +61,8 @@ public class PDFService {
                 getAllPDFArrayList.add(getAllPDF);
             }
             return getAllPDFArrayList;
+        } catch (NoMoreOutputsException ex) {
+            throw ex;
         } catch (Exception ex) {
             log.error("Invalid Request custId , userId , pageNo :: {} {} {}", custId, userId, pageNo);
             throw new InputInvalid("Failed to retrieve Invoice for given inputs");
@@ -69,21 +71,30 @@ public class PDFService {
     }
 
     public InvoiceResponse createPdf(int userId, int custId, InvoiceInput invoiceInput) {
+        InvoiceResponse invoiceResponse = new InvoiceResponse();
         try {
-            InvoiceResponse invoiceResponse = new InvoiceResponse();
             InvoiceCategory invoiceCategory = ic.decideInvoiceCategory(invoiceInput.getClientGSTIN());
             PDFTemplate pdfTemplate = ptr.findByTemplateID(userId, Integer.parseInt(invoiceInput.getPdfTemplateId()));
             byte[] generatedInvoicePDF = invoiceCategory.generateInvoicePDF(invoiceInput, pdfTemplate);
+            if (generatedInvoicePDF == null) {
+                throw new PDFGenerationFailed("PDF generation Failed");
+            }
             invoiceResponse.setInvoicePDF(generatedInvoicePDF);
-            savePDF(userId ,custId ,invoiceInput ,generatedInvoicePDF);
+            invoiceResponse.setUserId(userId);
+            invoiceResponse.setCustId(custId);
+            invoiceResponse.setInvoiceName(invoiceInput.getInvoiceName());
+            savePDF(userId, custId, invoiceInput, generatedInvoicePDF);
             return invoiceResponse;
+
+        } catch (PDFGenerationFailed ex) {
+            throw ex;
         } catch (Exception ex) {
             log.error("PDF generation failed");
-            throw new PDFGenerationFailed("PDF generation failed");
+            throw new PDFGenerationFailed("PDF generation failed due to unexpected error");
         }
     }
 
-    public void savePDF(int userId, int custId, InvoiceInput invoiceInput ,byte[]generatedInvoicePDF){
+    public void savePDF(int userId, int custId, InvoiceInput invoiceInput, byte[] generatedInvoicePDF) {
         PDFGeneration pdfGeneration = new PDFGeneration();
         pdfGeneration.setUserId(userId);
         pdfGeneration.setCustId(custId);
