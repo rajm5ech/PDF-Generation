@@ -85,24 +85,27 @@ public class PDFService {
             invoiceResponse.setInvoiceName(invoiceInput.getInvoiceName());
             savePDF(userId, custId, invoiceInput, generatedInvoicePDF);
             return invoiceResponse;
-
         } catch (PDFGenerationFailed ex) {
             throw ex;
         } catch (Exception ex) {
-            log.error("PDF generation failed");
-            throw new PDFGenerationFailed("PDF generation failed due to unexpected error");
+            log.error("Invoice generation failed");
+            throw new PDFGenerationFailed("Invoice generation failed due to unexpected error");
         }
     }
 
-    public void savePDF(int userId, int custId, InvoiceInput invoiceInput, byte[] generatedInvoicePDF) {
+    private void savePDF(int userId, int custId, InvoiceInput invoiceInput, byte[] generatedInvoicePDF) {
         PDFGeneration pdfGeneration = new PDFGeneration();
-        pdfGeneration.setUserId(userId);
-        pdfGeneration.setCustId(custId);
-        pdfGeneration.setCustomerName(invoiceInput.getClientName());
-        pdfGeneration.setInvoicePDF(generatedInvoicePDF);
-        pdfGeneration.setCreatedDate(Calendar.getInstance().getTime());
-        pdfGeneration.setInvoiceName(invoiceInput.invoiceName);
-        pr.save(pdfGeneration);
+        try {
+            pdfGeneration.setUserId(userId);
+            pdfGeneration.setCustId(custId);
+            pdfGeneration.setCustomerName(invoiceInput.getClientName());
+            pdfGeneration.setInvoicePDF(generatedInvoicePDF);
+            pdfGeneration.setCreatedDate(Calendar.getInstance().getTime());
+            pdfGeneration.setInvoiceName(invoiceInput.invoiceName);
+            pr.save(pdfGeneration);
+        } catch (Exception ex) {
+            log.error("Invoice insertion to database failed Stacktrace {}", (Object) ex.getStackTrace());
+        }
     }
 }
 

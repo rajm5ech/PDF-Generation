@@ -52,8 +52,17 @@ public class PDFTemplate {
     @Column(name = "CURRENCY")
     private String currency;
 
+    @Column(name = "LOGO")
+    private byte[] companyLogo;
 
-    public PDFTemplate(String h1Font, int h1Size, String h1Position, String h2Font, int h2Size, String h2Position, String itemFont, int itemSize, String itemTypography, String currency, int userId) {
+    @Column(name = "LOGO_POSITION")
+    private String logoPosition;
+
+    @Column(name = "LOGO_SIZE")
+    private int[] logoSize;
+
+
+    public PDFTemplate(String h1Font, int h1Size, String h1Position, String h2Font, int h2Size, String h2Position, String itemFont, int itemSize, String itemTypography, String currency, int userId , byte[] companyLogo , String logoPosition , int[] logoSize) {
         super();
         this.h1Font = h1Font;
         this.h1Size = h1Size;
@@ -66,6 +75,9 @@ public class PDFTemplate {
         this.itemTypography = itemTypography;
         this.currency = currency;
         this.userId = userId;
+        this.companyLogo = companyLogo;
+        this.logoPosition = logoPosition;
+        this.logoSize = logoSize;
     }
 
 }
