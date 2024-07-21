@@ -4,10 +4,10 @@ import PDFGeneration.DTO.InvoiceInput;
 import PDFGeneration.Domain.PDFTemplate;
 import PDFGeneration.Exception.PDFGenerationFailed;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfDocument;
+
 import com.itextpdf.text.pdf.PdfWriter;
 
-import javax.imageio.IIOException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
