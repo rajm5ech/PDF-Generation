@@ -8,6 +8,7 @@ import org.hibernate.sql.results.NoMoreOutputsException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.*;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -62,7 +63,7 @@ public class GlobalException extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @Nullable
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ProblemDetail pdfGenInputValidEX = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
         pdfGenInputValidEX.setTitle("INPUT FOR INVOICE GENERATION IS INVALID");

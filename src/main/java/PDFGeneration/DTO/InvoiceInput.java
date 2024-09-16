@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,6 +55,13 @@ public class InvoiceInput {
     @NotNull
     @NotEmpty
     public byte[] digitalSignature;
+    @NotNull
+    @NotEmpty
+    public Date dueDate;
+    @NotNull
+    @NotEmpty
+    public Date invoiceDate;
+
 
 
 }
