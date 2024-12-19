@@ -12,6 +12,8 @@ import PDFGeneration.InvoiceGeneration.InvoiceCategory;
 import PDFGeneration.Repository.PDFRepository;
 import PDFGeneration.Repository.PDFTemplateRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.DataException;
+import org.hibernate.exception.JDBCConnectionException;
 import org.hibernate.sql.results.NoMoreOutputsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -65,8 +67,9 @@ public class PDFService {
             throw ex;
         } catch (Exception ex) {
             log.error("Invalid Request custId , userId , pageNo :: {} {} {}", custId, userId, pageNo);
-            throw new InputInvalid("Failed to retrieve Invoice for given inputs");
+            throw new InputInvalid("Failed to retrieve Invoice for given parameters");
         }
+
 
     }
 
@@ -77,7 +80,7 @@ public class PDFService {
             PDFTemplate pdfTemplate = ptr.findByTemplateID(userId, Integer.parseInt(invoiceInput.getPdfTemplateId()));
             byte[] generatedInvoicePDF = invoiceCategory.generateInvoicePDF(invoiceInput, pdfTemplate);
             if (generatedInvoicePDF == null) {
-                throw new PDFGenerationFailed("PDF generation Failed");
+                throw new NullPointerException("PDF generation Failed");
             }
             invoiceResponse.setInvoicePDF(generatedInvoicePDF);
             invoiceResponse.setUserId(userId);
@@ -85,28 +88,23 @@ public class PDFService {
             invoiceResponse.setInvoiceName(invoiceInput.getInvoiceName());
             savePDF(userId, custId, invoiceInput, generatedInvoicePDF);
             return invoiceResponse;
-        } catch (PDFGenerationFailed ex) {
-            throw ex;
-        } catch (Exception ex) {
+        } catch (NullPointerException | IllegalArgumentException ex) {
             log.error("Invoice generation failed");
-            throw new PDFGenerationFailed("Invoice generation failed due to unexpected error");
+            throw new PDFGenerationFailed("Invoice generation failed due to unexpected error", ex);
         }
     }
 
-    private void savePDF(int userId, int custId, InvoiceInput invoiceInput, byte[] generatedInvoicePDF) {
+    private void savePDF(int userId, int custId, InvoiceInput invoiceInput, byte[] generatedInvoicePDF) throws IllegalArgumentException {
         PDFGeneration pdfGeneration = new PDFGeneration();
-        try {
-            pdfGeneration.setUserId(userId);
-            pdfGeneration.setCustId(custId);
-            pdfGeneration.setCustomerName(invoiceInput.getClientName());
-            pdfGeneration.setInvoicePDF(generatedInvoicePDF);
-            pdfGeneration.setCreatedDate(Calendar.getInstance().getTime());
-            pdfGeneration.setInvoiceName(invoiceInput.invoiceName);
-            pr.save(pdfGeneration);
-        } catch (Exception ex) {
-            log.error("Invoice insertion to database failed Stacktrace {}", (Object) ex.getStackTrace());
-        }
+        pdfGeneration.setUserId(userId);
+        pdfGeneration.setCustId(custId);
+        pdfGeneration.setCustomerName(invoiceInput.getClientName());
+        pdfGeneration.setInvoicePDF(generatedInvoicePDF);
+        pdfGeneration.setCreatedDate(Calendar.getInstance().getTime());
+        pdfGeneration.setInvoiceName(invoiceInput.invoiceName);
+        pr.save(pdfGeneration);
     }
-}
 
+
+}
 
